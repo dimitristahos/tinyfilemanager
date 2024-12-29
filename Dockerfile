@@ -7,16 +7,18 @@
 # how to use?
 # docker run -d -v /absolute/path:/var/www/html/data -p 80:80 --restart=always --name tinyfilemanager tinyfilemanager/tinyfilemanager:master
 
-FROM php:8.2-apache
+FROM php:8.2-apache-alpine
 
 # if run in China
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 # Install zip extension and other required extensions
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     libzip-dev \
-    && docker-php-ext-install zip \
-    && rm -rf /var/lib/apt/lists/*
+    oniguruma-dev
+
+RUN docker-php-ext-install \
+    zip 
 
 # Enable Apache rewrite module
 RUN a2enmod rewrite
