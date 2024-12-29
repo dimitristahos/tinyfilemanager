@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  tinyfilemanager:
+    build: .
+    ports:
+      - "${PORT:-3666}:80"  # Changed to 8080 to avoid port conflicts
+    volumes:
+      - /var/lib/docker/volumes/zosk4oksw88wkosg8sw0w4so_wordpress-files/_data:/var/www/html/data
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
