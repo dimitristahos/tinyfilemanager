@@ -34,4 +34,4 @@ RUN chown -R www-data:www-data /var/www/html
 # Set proper Apache environment
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
-CMD ["sh", "-c", "php -S 0.0.0.0:80"]
+EXPOSE 80
