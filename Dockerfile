@@ -22,13 +22,14 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Create data directory with proper permissions
-RUN mkdir -p /var/www/html/data && \
-    chown -R www-data:www-data /var/www/html
+RUN mkdir -p /var/www/html/data && 
 
 WORKDIR /var/www/html
 
 COPY tinyfilemanager.php index.php
 COPY config.php config.php
+
+RUN chown -R www-data:www-data /var/www/html
 
 # Set proper Apache environment
 ENV APACHE_DOCUMENT_ROOT /var/www/html
