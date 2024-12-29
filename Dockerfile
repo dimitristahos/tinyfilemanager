@@ -7,21 +7,30 @@
 # how to use?
 # docker run -d -v /absolute/path:/var/www/html/data -p 80:80 --restart=always --name tinyfilemanager tinyfilemanager/tinyfilemanager:master
 
-FROM php:8.2-fpm-alpine
+FROM php:8.2-apache
 
 # if run in China
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN apk add --no-cache \
+# Install zip extension and other required extensions
+RUN apt-get update && apt-get install -y \
     libzip-dev \
-    oniguruma-dev
+    && docker-php-ext-install zip \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install \
-    zip 
+# Enable Apache rewrite module
+RUN a2enmod rewrite
+
+# Create data directory with proper permissions
+RUN mkdir -p /var/www/html/data && \
+    chown -R www-data:www-data /var/www/html
 
 WORKDIR /var/www/html
 
 COPY tinyfilemanager.php index.php
 COPY config.php config.php
+
+# Set proper Apache environment
+ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 CMD ["sh", "-c", "php -S 0.0.0.0:80"]
