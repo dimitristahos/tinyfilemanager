@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Create data directory with proper permissions
-RUN mkdir -p /var/www/html/data && 
+RUN mkdir -p /var/www/html/data
 
 WORKDIR /var/www/html
 
