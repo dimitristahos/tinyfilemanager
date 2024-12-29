@@ -1,4 +1,7 @@
 <?php
+//Default Configuration
+$CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
+
 // User is authenticated, continue with file manager configuration
 $use_auth = false; // Since we've already handled auth above
 
