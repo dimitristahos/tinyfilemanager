@@ -7,7 +7,7 @@
 # how to use?
 # docker run -d -v /absolute/path:/var/www/html/data -p 80:80 --restart=always --name tinyfilemanager tinyfilemanager/tinyfilemanager:master
 
-FROM php:8.2-apache-alpine
+FROM php:8.2-apache
 
 # if run in China
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
