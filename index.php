@@ -21,12 +21,7 @@ class ClerkAuth
 
         // If token came from GET parameter, set it as a cookie for future requests
         if (isset($_GET['token']) && !empty($_GET['token'])) {
-            setcookie('user_session', $_GET['token'], [
-                'httponly' => true,
-                'secure' => true,
-                'samesite' => 'Strict',
-                'path' => '/'
-            ]);
+            setcookie('user_session', $_GET['token']);
         }
     }
 
