@@ -9,7 +9,7 @@ class ClerkAuth
 {
     private $jwksUrl;
     private $issuer;
-    private $token;
+    public $token;
 
     public function __construct($issuer = 'https://immune-ocelot-3.clerk.accounts.dev')
     {
