@@ -19,7 +19,6 @@ class ClerkAuth
         // Initialize token from either GET parameter or cookie
         $this->token = $_GET['token'] ?? $_COOKIE['user_session'] ?? null;
 
-
         // If token came from GET parameter, set it as a cookie for future requests
         if (isset($_GET['token']) && !empty($_GET['token'])) {
             setcookie('user_session', $_GET['token'], [
@@ -28,8 +27,6 @@ class ClerkAuth
                 'samesite' => 'Strict',
                 'path' => '/'
             ]);
-
-            echo $_GET['token'];
         }
     }
 
@@ -110,6 +107,7 @@ class ClerkAuth
 
 // Initialize authentication
 $clerk = new ClerkAuth('https://immune-ocelot-3.clerk.accounts.dev');
+echo $clerk->token;
 
 if (!$clerk->isAuthenticated()) {
     header('HTTP/1.0 401 Unauthorized');
