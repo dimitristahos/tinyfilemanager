@@ -102,7 +102,6 @@ class ClerkAuth
 
 // Initialize authentication
 $clerk = new ClerkAuth('https://immune-ocelot-3.clerk.accounts.dev');
-echo $clerk->token;
 
 if (!$clerk->isAuthenticated()) {
     header('HTTP/1.0 401 Unauthorized');
