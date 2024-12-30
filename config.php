@@ -9,11 +9,25 @@ class ClerkAuth
 {
     private $jwksUrl;
     private $issuer;
+    private $token;
 
     public function __construct($issuer = 'https://immune-ocelot-3.clerk.accounts.dev')
     {
         $this->jwksUrl = $issuer . '/.well-known/jwks.json';
         $this->issuer = $issuer;
+
+        // Initialize token from either GET parameter or cookie
+        $this->token = $_GET['token'] ?? $_COOKIE['user_session'] ?? null;
+
+        // If token came from GET parameter, set it as a cookie for future requests
+        if (isset($_GET['token']) && !empty($_GET['token'])) {
+            setcookie('user_session', $_GET['token'], [
+                'httponly' => true,
+                'secure' => true,
+                'samesite' => 'Strict',
+                'path' => '/'
+            ]);
+        }
     }
 
     private function getPublicKey()
@@ -29,16 +43,12 @@ class ClerkAuth
                 throw new Exception("No keys found in JWKS");
             }
 
-            // Get all keys from JWKS
             $keys = JWK::parseKeySet($jwks);
-
-            // Get the first key's ID
             $firstKeyId = array_key_first($keys);
             if ($firstKeyId === null) {
                 throw new Exception("No valid keys found");
             }
 
-            // Return the key material
             return $keys[$firstKeyId]->getKeyMaterial();
         } catch (Exception $e) {
             error_log('Failed to get public key: ' . $e->getMessage());
@@ -49,25 +59,21 @@ class ClerkAuth
     public function isAuthenticated()
     {
         try {
-            if (!isset($_COOKIE['__session'])) {
+            if ($this->token === null) {
                 return false;
             }
 
-            $token = $_COOKIE['__session'];
             $key = $this->getPublicKey();
-
             if ($key === null) {
                 return false;
             }
 
-            $decoded = JWT::decode($token, new Key($key, 'RS256'));
+            $decoded = JWT::decode($this->token, new Key($key, 'RS256'));
 
-            // Verify the token issuer
             if ($decoded->iss !== $this->issuer) {
                 return false;
             }
 
-            // Verify expiration
             if (isset($decoded->exp) && time() >= $decoded->exp) {
                 return false;
             }
@@ -82,19 +88,16 @@ class ClerkAuth
     public function getUserId()
     {
         try {
-            if (!isset($_COOKIE['__session'])) {
+            if ($this->token === null) {
                 return null;
             }
 
-            $token = $_COOKIE['__session'];
             $key = $this->getPublicKey();
-
             if ($key === null) {
                 return null;
             }
 
-            $decoded = JWT::decode($token, new Key($key, 'RS256'));
-
+            $decoded = JWT::decode($this->token, new Key($key, 'RS256'));
             return $decoded->sub ?? null;
         } catch (Exception $e) {
             return null;
@@ -102,17 +105,18 @@ class ClerkAuth
     }
 }
 
-// Authentication check
+// Initialize authentication
 $clerk = new ClerkAuth('https://immune-ocelot-3.clerk.accounts.dev');
 
 if (!$clerk->isAuthenticated()) {
     header('HTTP/1.0 401 Unauthorized');
     echo "Not authenticated";
 
-    sleep(4);
-
-    header("Location: http://popssh.lndo.site");
-
+    // Make sure no output has been sent before this point
+    if (!headers_sent()) {
+        sleep(4);
+        header("Location: http://popssh.lndo.site");
+    }
     exit();
 }
 
