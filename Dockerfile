@@ -34,7 +34,8 @@ COPY composer.* ./
 RUN if [ -f "composer.json" ]; then composer install --no-scripts --no-autoloader; fi
 
 # Copy the rest of the files
-COPY tinyfilemanager.php index.php
+COPY index.php index.php
+COPY tinyfilemanager.php tinyfilemanager.php
 COPY config.php config.php
 
 # Generate autoloader if you have composer dependencies
