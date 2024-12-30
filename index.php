@@ -19,7 +19,6 @@ class ClerkAuth
         // Initialize token from either GET parameter or cookie
         $this->token = $_GET['token'] ?? $_COOKIE['user_session'] ?? null;
 
-        echo $_GET['token'];
 
         // If token came from GET parameter, set it as a cookie for future requests
         if (isset($_GET['token']) && !empty($_GET['token'])) {
@@ -29,6 +28,8 @@ class ClerkAuth
                 'samesite' => 'Strict',
                 'path' => '/'
             ]);
+
+            echo $_GET['token'];
         }
     }
 
