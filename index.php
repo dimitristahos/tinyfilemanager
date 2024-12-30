@@ -105,13 +105,7 @@ $clerk = new ClerkAuth('https://immune-ocelot-3.clerk.accounts.dev');
 
 if (!$clerk->isAuthenticated()) {
     header('HTTP/1.0 401 Unauthorized');
-    echo "Not authenticated";
-
-    // Make sure no output has been sent before this point
-    if (!headers_sent()) {
-        sleep(4);
-        header("Location: http://popssh.lndo.site");
-    }
+    header("Location: http://coolauth.com");
     exit();
 }
 
